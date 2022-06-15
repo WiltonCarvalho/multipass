@@ -31,7 +31,7 @@ runcmd:
       fi
     fi
 # # Ubuntu
-# multipass launch -n primary -v -c 1 -m 1G -d 10G --cloud-init multipass.yaml 20.04
+# multipass launch -n primary -v -c 1 -m 1G -d 10G --cloud-init multipass.yaml 22.04
 # multipass exec primary -- bash
 
 # # Debian
@@ -57,4 +57,5 @@ runcmd:
 # # Cleanup
 # multipass delete primary debian oracle-linux-8 oracle-linux-7 centos
 # multipass purge
+EOF
 ```
