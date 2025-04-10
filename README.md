@@ -7,6 +7,18 @@ multipass set local.driver=libvirt
 # Cloud-Init to set Ubuntu User
 cat <<'EOF'> multipass.yaml
 #cloud-config
+network:
+  version: 2
+  ethernets:
+    ens3:
+      dhcp4: false
+  bridges:
+    br0:
+      dhcp4: true
+      interfaces: [ ens3 ]
+      parameters:
+        stp: false
+        forward-delay: 0
 manage_etc_hosts: False
 system_info:
   default_user:
@@ -31,16 +43,21 @@ runcmd:
       fi
     fi
 # # Ubuntu
-# multipass launch -n primary -v -c 1 -m 1G -d 10G --cloud-init multipass.yaml 22.04
+# multipass launch -n primary -v -c 1 -m 1G -d 10G --cloud-init multipass.yaml 24.04
 # multipass exec primary -- bash
 
 # # Debian
-# debian_img=http://cloud.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2
+# debian_img=http://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
 # multipass launch -n debian -v -c 2 -m 2G -d 10G --cloud-init multipass.yaml $debian_img
 # multipass exec debian -- bash
 
+# # Oracle Linux 9
+# oracle_linux_9_img=https://yum.oracle.com/templates/OracleLinux/OL9/u5/x86_64/OL9U5_x86_64-kvm-b253.qcow2
+# multipass launch -n oracle-linux-9 -v -c 2 -m 2G -d 40G --cloud-init multipass.yaml $oracle_linux_9_img
+# multipass exec oracle-linux-9 -- bash
+
 # # Oracle Linux 8
-# oracle_linux_8_img=https://yum.oracle.com/templates/OracleLinux/OL8/u4/x86_64/OL8U4_x86_64-olvm-b85.qcow2
+# oracle_linux_8_img=https://yum.oracle.com/templates/OracleLinux/OL8/u10/x86_64/OL8U10_x86_64-kvm-b237.qcow2
 # multipass launch -n oracle-linux-8 -v -c 2 -m 2G -d 40G --cloud-init multipass.yaml $oracle_linux_8_img
 # multipass exec oracle-linux-8 -- bash
 
@@ -57,5 +74,15 @@ runcmd:
 # # Cleanup
 # multipass delete primary debian oracle-linux-8 oracle-linux-7 centos
 # multipass purge
+
+# # Install
+# sudo snap install multipass
+# sudo apt install qemu-kvm virt-manager libvirt-daemon libvirt-daemon-system
+# sudo snap connect multipass:libvirt
+# multipass set local.driver=libvirt
+# multipass set client.gui.autostart=false
+# # Restart
+# sudo snap restart multipass.multipassd
+# sudo snap connect multipass:libvirt
 EOF
 ```
